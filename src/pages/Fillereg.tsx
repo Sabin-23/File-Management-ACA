@@ -1,6 +1,7 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import "./Fillereg.css";
+import logoImg from '../assets/cropped-Logo-Abayo-Co.-Advocates.png';
 
 type CaseType =
   | "civil"
@@ -344,7 +345,7 @@ const Fillereg: React.FC = () => {
             <div className="header-left">
               <div className="logo-box">
                 <img
-                  src="/src/assets/cropped-Logo-Abayo-Co.-Advocates.png"
+                  src={logoImg}
                   alt="Abayo & Co. Advocates"
                 />
               </div>
