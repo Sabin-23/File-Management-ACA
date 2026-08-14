@@ -340,16 +340,15 @@ const Fillereg: React.FC = () => {
           }}
         >
           {/* HEADER */}
-
-          <div className="header">
-            <div className="header-left">
+          <div className="header-left">
               <div className="logo-box">
                 <img
                   src={logoImg}
                   alt="Abayo & Co. Advocates"
                 />
               </div>
-            </div>
+          </div>
+          <div className="header">
 
             <div className="header-info-left">
               <div>P.O. Box 4170, Kigali - Rwanda</div>
