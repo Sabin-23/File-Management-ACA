@@ -1,0 +1,81 @@
+/* shadcn tokens that AuthView reads internally — this is the real re-skin */
+:root {
+  --background: #f4f3ef;
+  --foreground: #1a1a2e;
+  --card: #fff;
+  --card-foreground: #1a1a2e;
+  --primary: #790000;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f3ef;
+  --secondary-foreground: #790000;
+  --muted: #f4f3ef;
+  --muted-foreground: #7a7a8c;
+  --accent: #f4f3ef;
+  --accent-foreground: #790000;
+  --destructive: #dc2626;
+  --border: #e0ddd6;
+  --input: #e0ddd6;
+  --ring: #790000;
+  --radius: 0.625rem; /* 10px, matches your --radius-sm */
+  font-family: 'Sora', sans-serif;
+}
+body{
+    background-color: #790000;
+}
+/* your two-panel shell, wrapping AuthView rather than replacing it */
+.auth-shell {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 780px;
+  min-height: 500px;
+  margin: 1.5rem auto;
+  background: var(--primary);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
+}
+
+.auth-shell-side {
+  width: 240px;
+  flex-shrink: 0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem 2rem;
+}
+
+.auth-shell-brand {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.auth-shell-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.auth-shell-sub {
+  font-size: 13px;
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+.auth-shell-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+@media (max-width: 580px) {
+  .auth-shell-side {
+    display: none;
+  }
+}

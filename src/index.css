@@ -1,0 +1,20 @@
+/* src/index.css */
+:root {
+  /* Primary brand & button colors */
+  --neon-auth-primary: #7a0000;            /* Main button background */
+  --neon-auth-primary-hover: #5a0000;      /* Button hover background */
+  --neon-auth-primary-foreground: #ffffff; /* Button text color */
+
+  /* Surface & background colors */
+  --neon-auth-background: #ffffff;         /* Main card background */
+  --neon-auth-foreground: #12281b;         /* Primary text color */
+  --neon-auth-muted-foreground: #666666;   /* Secondary/label text */
+
+  /* Form input styling */
+  --neon-auth-input-background: #f9f9f9;   /* Input background */
+  --neon-auth-border: #d0d0d0;             /* Input borders */
+  --neon-auth-ring: #7a0000;               /* Focus ring color */
+
+  /* Error state */
+  --neon-auth-destructive: #dc2626;        /* Error message color */
+}
