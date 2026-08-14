@@ -173,19 +173,8 @@ export function Home() {
 
                 <div className="card">
                   <span className="card-index">02</span>
-                  <h2>Revenue</h2>
+                  <h2>Feature 2</h2>
                 </div>
-
-                <div className="card">
-                  <span className="card-index">03</span>
-                  <h2>Orders</h2>
-                </div>
-
-                <div className="card">
-                  <span className="card-index">04</span>
-                  <h2>Growth</h2>
-                </div>
-
               </div>
 
             </section>
