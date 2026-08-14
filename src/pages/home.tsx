@@ -56,7 +56,7 @@ export function Home() {
       fileType,
     }).toString();
 
-    navigate(`/dashboard/fillereg?${queryParams}`);
+    navigate(`/Fillereg?${queryParams}`);
 
     closeModal();
   };
@@ -66,7 +66,6 @@ export function Home() {
       <SignedIn>
         <div className="container">
 
-          {/* SIDEBAR NAVIGATION */}
           <div className="navigation">
 
             <div className="logo">
