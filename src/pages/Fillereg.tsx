@@ -1,7 +1,7 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import "./Fillereg.css";
-import logoImg from '../assets/cropped-Logo-Abayo-Co.-Advocates.png';
+import logoImg from "../assets/cropped-Logo-Abayo-Co.-Advocates.png";
 
 type CaseType =
   | "civil"
@@ -12,75 +12,100 @@ type CaseType =
   | "criminal"
   | "consultancy";
 
+type PartiesLayout = "standard" | "criminal" | "consultancy";
+
+interface FileNumberConfig {
+  label: string;
+}
+
 interface CaseConfig {
   label: string;
   tag: string;
   color: string;
-  fileNumbers: string[];
+  fileNumbers: FileNumberConfig[];
   objectLabel: string;
   objectCount: number;
   footer: "court" | "arbitration" | "consultancy";
+  partiesLayout: PartiesLayout;
 }
+
+const fileNums = (labels: string[]): FileNumberConfig[] =>
+  labels.map((label) => ({ label }));
 
 const CASE_TYPES: Record<CaseType, CaseConfig> = {
   civil: {
     label: "Civil Case",
     tag: "CIV",
     color: "#9FDDC7",
-    fileNumbers: ["RC", "RCA", "RCAA"],
+    fileNumbers: fileNums(["File nº: RC", "File nº: RCA", "File nº: RCAA"]),
     objectLabel: "Object of the Case",
     objectCount: 4,
     footer: "court",
+    partiesLayout: "standard",
   },
 
   labor: {
     label: "Labor Case",
     tag: "LAB",
     color: "#BFE29A",
-    fileNumbers: ["RLAB", "RLABA", "RLABAA"],
+    fileNumbers: fileNums([
+      "File nº: RLAB",
+      "File nº: RLABA",
+      "File nº: RLABAA",
+    ]),
     objectLabel: "Object of the Case",
     objectCount: 4,
     footer: "court",
+    partiesLayout: "standard",
   },
 
   administrative: {
     label: "Administrative Case",
     tag: "ADM",
     color: "#F5A55D",
-    fileNumbers: ["RAD", "RADA", "RADAA"],
+    fileNumbers: fileNums(["File nº: RAD", "File nº: RADA", "File nº: RADAA"]),
     objectLabel: "Object of the Case",
     objectCount: 4,
     footer: "court",
+    partiesLayout: "standard",
   },
 
   commercial: {
     label: "Commercial Case",
     tag: "COM",
     color: "#EAD27A",
-    fileNumbers: ["RCOM", "RCOMA", "RCOMAA"],
+    fileNumbers: fileNums([
+      "File nº: RCOM",
+      "File nº: RCOMA",
+      "File nº: RCOMAA",
+    ]),
     objectLabel: "Object of the Case",
     objectCount: 4,
     footer: "court",
+    partiesLayout: "standard",
   },
 
   arbitration: {
     label: "Arbitration File",
     tag: "ARB",
     color: "#C9C7C2",
-    fileNumbers: ["ARB"],
+    fileNumbers: fileNums(["File nº: ARB"]),
     objectLabel: "Object of the Case",
     objectCount: 3,
     footer: "arbitration",
+    partiesLayout: "standard",
   },
 
   criminal: {
     label: "Criminal Case",
     tag: "CRIM",
     color: "#F2B9C4",
-    fileNumbers: ["R/B", "RP", "RPA", "RPAA"],
+    // matches the printed form: "R/B Nº", "File nº: RP", "File nº: RPAA"
+    fileNumbers: fileNums(["R/B Nº", "File nº: RP", "File nº: RPAA"]),
     objectLabel: "Offense Committed",
     objectCount: 4,
     footer: "court",
+    partiesLayout: "criminal",
   },
 
   consultancy: {
@@ -88,9 +113,10 @@ const CASE_TYPES: Record<CaseType, CaseConfig> = {
     tag: "CONS",
     color: "#EFE7D2",
     fileNumbers: [],
-    objectLabel: "Object of the Case",
-    objectCount: 0,
+    objectLabel: "Assignment",
+    objectCount: 4,
     footer: "consultancy",
+    partiesLayout: "consultancy",
   },
 };
 
@@ -103,11 +129,18 @@ function getCaseType(fileType: string | null): CaseType {
 }
 
 interface PartyProps {
-  type: "plaintiff" | "defendant" | "intervener";
+  type: string;
   title: string;
+  nameLabel?: string;
+  repLabel?: string;
 }
 
-const PartySection: React.FC<PartyProps> = ({ type, title }) => {
+const PartySection: React.FC<PartyProps> = ({
+  type,
+  title,
+  nameLabel,
+  repLabel = "Represented by",
+}) => {
   const prefix = type;
 
   return (
@@ -115,6 +148,8 @@ const PartySection: React.FC<PartyProps> = ({ type, title }) => {
       <div className="subsection-title">{title}</div>
 
       <div className="form-row">
+        {nameLabel && <span>{nameLabel}</span>}
+
         <input
           type="text"
           id={`${prefix}_name`}
@@ -281,7 +316,7 @@ const PartySection: React.FC<PartyProps> = ({ type, title }) => {
       </div>
 
       <div className="form-row">
-        <span>Represented by</span>
+        <span>{repLabel}</span>
 
         <input
           type="text"
@@ -302,6 +337,155 @@ const PartySection: React.FC<PartyProps> = ({ type, title }) => {
     </>
   );
 };
+
+const ProsecutionSection: React.FC = () => (
+  <>
+    <div className="subsection-title">PLAINTIFF</div>
+
+    <div className="form-row">
+      <span>Prosecution:</span>
+
+      <input
+        type="text"
+        id="prosecution"
+        name="prosecution"
+        className="line-input"
+      />
+    </div>
+  </>
+);
+
+const AccusedSection: React.FC<{ index: number }> = ({ index }) => (
+  <PartySection
+    type={`accused_${index}`}
+    title="ACCUSED:"
+    nameLabel="Names:"
+    repLabel="Assisted by"
+  />
+);
+
+const CivilPartySection: React.FC = () => (
+  <PartySection
+    type="civil_party"
+    title="CIVIL PARTY:"
+    nameLabel="Names:"
+    repLabel="Represented by"
+  />
+);
+
+const CompanySection: React.FC = () => (
+  <>
+    <div className="subsection-title">COMPANY</div>
+
+    <div className="form-row">
+      <span>Company Name:</span>
+      <input
+        type="text"
+        id="company_name"
+        name="company_name"
+        className="line-input"
+      />
+      <span>Represented by</span>
+      <input
+        type="text"
+        id="company_rep"
+        name="company_rep"
+        className="line-input"
+      />
+    </div>
+
+    <div className="form-row">
+      <span>HQs:</span>
+      <input
+        type="text"
+        id="company_village"
+        name="company_village"
+        className="line-input"
+      />
+      <span>Cell,</span>
+      <input
+        type="text"
+        id="company_cell"
+        name="company_cell"
+        className="line-input"
+      />
+      <span>Sector,</span>
+      <input
+        type="text"
+        id="company_sector"
+        name="company_sector"
+        className="line-input"
+      />
+    </div>
+
+    <div className="form-row">
+      <span>District,</span>
+      <input
+        type="text"
+        id="company_district"
+        name="company_district"
+        className="line-input"
+      />
+      <span>Province,</span>
+      <input
+        type="text"
+        id="company_province"
+        name="company_province"
+        className="line-input"
+      />
+      <span>P. O. Box</span>
+      <input
+        type="text"
+        id="company_po_box"
+        name="company_po_box"
+        className="line-input"
+      />
+    </div>
+
+    <div className="form-row">
+      <span>Email</span>
+      <input
+        type="email"
+        id="company_email"
+        name="company_email"
+        className="line-input"
+      />
+      <span>TIN:</span>
+      <input
+        type="text"
+        id="company_tin"
+        name="company_tin"
+        className="line-input"
+      />
+    </div>
+
+    <div className="form-row">
+      <span>Office Phone nº</span>
+      <input
+        type="text"
+        id="company_office_phone"
+        name="company_office_phone"
+        className="line-input input-fixed-md"
+      />
+      <span>Mobile Phone nº</span>
+      <input
+        type="text"
+        id="company_mobile_phone"
+        name="company_mobile_phone"
+        className="line-input input-fixed-md"
+      />
+    </div>
+  </>
+);
+
+const IndividualSection: React.FC = () => (
+  <PartySection
+    type="individual"
+    title="INDIVIDUAL"
+    nameLabel="Names:"
+    repLabel="Represented by"
+  />
+);
 
 const Fillereg: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -328,11 +512,7 @@ const Fillereg: React.FC = () => {
 
   return (
     <div className="fillereg-page">
-      <form
-        id="caseForm"
-        onSubmit={handleSubmit}
-        className="fillereg-form"
-      >
+      <form id="caseForm" onSubmit={handleSubmit} className="fillereg-form">
         <div
           className="document-page"
           style={{
@@ -341,15 +521,11 @@ const Fillereg: React.FC = () => {
         >
           {/* HEADER */}
           <div className="header-left">
-              <div className="logo-box">
-                <img
-                  src={logoImg}
-                  alt="Abayo & Co. Advocates"
-                />
-              </div>
+            <div className="logo-box">
+              <img src={logoImg} alt="Abayo & Co. Advocates" />
+            </div>
           </div>
           <div className="header">
-
             <div className="header-info-left">
               <div>P.O. Box 4170, Kigali - Rwanda</div>
               <div>TIN & VAT : 103455746</div>
@@ -398,17 +574,29 @@ const Fillereg: React.FC = () => {
 
           {/* TITLE */}
 
-          <div className="case-title">
-            {caseConfig.label}
-          </div>
+          <div className="case-title">{caseConfig.label}</div>
+
+          {/* DOMAIN - consultancy only */}
+
+          {currentCaseType === "consultancy" && (
+            <div className="form-row">
+              <span>DOMAIN:</span>
+              <input
+                type="text"
+                id="domain"
+                name="domain"
+                className="line-input"
+              />
+            </div>
+          )}
 
           {/* FILE NUMBERS */}
 
           {caseConfig.fileNumbers.length > 0 && (
             <div className="file-numbers">
               {caseConfig.fileNumbers.map((fileNumber, index) => (
-                <div className="file-row" key={fileNumber}>
-                  <span>File nº: {fileNumber}</span>
+                <div className="file-row" key={fileNumber.label}>
+                  <span>{fileNumber.label}</span>
 
                   <input
                     type="text"
@@ -436,49 +624,67 @@ const Fillereg: React.FC = () => {
             </div>
           )}
 
-          {/* PARTIES */}
+          {/* PARTIES - layout depends on case type */}
 
-          <div className="section-title">
-            PARTIES INVOLVED
-          </div>
+          {caseConfig.partiesLayout === "standard" && (
+            <>
+              <div className="section-title">PARTIES INVOLVED</div>
 
-          <PartySection
-            type="plaintiff"
-            title="PLAINTIFF / APPELLANT:"
-          />
+              <PartySection type="plaintiff" title="PLAINTIFF / APPELLANT:" />
 
-          <PartySection
-            type="defendant"
-            title="DEFENDANT / RESPONDENT:"
-          />
+              <PartySection type="defendant" title="DEFENDANT / RESPONDENT:" />
 
-          <PartySection
-            type="intervener"
-            title="VOLUNTARY / FORCED INTERVENTION:"
-          />
+              <PartySection
+                type="intervener"
+                title="VOLUNTARY / FORCED INTERVENTION:"
+              />
+            </>
+          )}
 
-          {/* OBJECT */}
+          {caseConfig.partiesLayout === "criminal" && (
+            <>
+              <div className="section-title">PARTIES INVOLVED</div>
 
-          <div className="subsection-title">
-            {caseConfig.objectLabel.toUpperCase()}:
-          </div>
+              <ProsecutionSection />
+              <AccusedSection index={1} />
+              <AccusedSection index={2} />
+              <CivilPartySection />
+            </>
+          )}
 
-          <ul className="object-list">
-            {Array.from({
-              length: caseConfig.objectCount,
-            }).map((_, index) => (
-              <li key={index}>
-                <span>{index + 1}.</span>
+          {caseConfig.partiesLayout === "consultancy" && (
+            <>
+              <CompanySection />
+              <IndividualSection />
+            </>
+          )}
 
-                <input
-                  type="text"
-                  id={`case_object_${index + 1}`}
-                  name={`case_object_${index + 1}`}
-                  className="line-input"
-                />
-              </li>
-            ))}
-          </ul>
+          {/* OBJECT / OFFENSE / ASSIGNMENT */}
+
+          {caseConfig.objectCount > 0 && (
+            <>
+              <div className="subsection-title">
+                {caseConfig.objectLabel.toUpperCase()}:
+              </div>
+
+              <ul className="object-list">
+                {Array.from({
+                  length: caseConfig.objectCount,
+                }).map((_, index) => (
+                  <li key={index}>
+                    <span>{index + 1}.</span>
+
+                    <input
+                      type="text"
+                      id={`case_object_${index + 1}`}
+                      name={`case_object_${index + 1}`}
+                      className="line-input"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
 
           {/* COURT DETAILS */}
 
@@ -570,11 +776,57 @@ const Fillereg: React.FC = () => {
             </div>
           )}
 
+          {/* CONSULTANCY DETAILS */}
+
+          {caseConfig.footer === "consultancy" && (
+            <div className="details-section">
+              <div className="form-row">
+                <span>RECEIVED ON :</span>
+
+                <input
+                  type="date"
+                  id="received_on"
+                  name="received_on"
+                  className="line-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <span>DEADLINE :</span>
+
+                <input
+                  type="date"
+                  id="deadline"
+                  name="deadline"
+                  className="line-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <span>ADVOCATE ASSIGNED:</span>
+
+                <input
+                  type="text"
+                  id="advocate_assigned"
+                  name="advocate_assigned"
+                  className="line-input"
+                />
+
+                <span>Phone nº</span>
+
+                <input
+                  type="text"
+                  id="advocate_phone"
+                  name="advocate_phone"
+                  className="line-input input-fixed-md"
+                />
+              </div>
+            </div>
+          )}
+
           {/* FOOTER */}
 
-          <div className="footer">
-            www.abayo.law
-          </div>
+          <div className="footer">www.abayo.law</div>
         </div>
       </form>
     </div>
