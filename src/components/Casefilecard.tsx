@@ -1,6 +1,6 @@
 import React from "react";
 import { CASE_TYPES, getCaseType } from "./caseTypes";
-import "./CaseFileCard.css";
+import "./Casefilecard.css";
 
 /**
  * Matches what GET /api/case-files returns. Keep in sync with
