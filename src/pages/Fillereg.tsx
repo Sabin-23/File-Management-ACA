@@ -151,6 +151,8 @@ const PartySection: React.FC<PartyProps> = ({
         {nameLabel && <span>{nameLabel}</span>}
 
         <input
+          required
+          autoComplete="off"
           type="text"
           id={`${prefix}_name`}
           name={`${prefix}_name`}
@@ -829,6 +831,11 @@ const Fillereg: React.FC = () => {
           <div className="footer">www.abayo.law</div>
         </div>
       </form>
+      <div>
+        <button type="submit" form="caseForm" className="submit-button">
+          Submit Case
+        </button>
+      </div>
     </div>
   );
 };
