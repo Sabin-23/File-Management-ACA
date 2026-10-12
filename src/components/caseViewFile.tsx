@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Fillereg from "../pages/Fillereg";
 import { authClient } from "../lib/auth";
