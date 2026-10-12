@@ -10,7 +10,6 @@ export type CaseType =
 export type PartiesLayout = "standard" | "criminal" | "consultancy";
 
 export interface FileNumberConfig {
-  /** Full label text as printed on the form, e.g. "File nº: RC" or "R/B Nº" */
   label: string;
 }
 

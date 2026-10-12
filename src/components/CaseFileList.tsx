@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { CASE_TYPES, type CaseType } from "./caseTypes";
 import CaseFileCard, { type CaseFileSummary } from "./Casefilecard";
 import "./CaseFileList.css";
+import { authClient } from "../lib/auth";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 const CASE_FILES_ENDPOINT = `${API_BASE}/api/case-files`;
+const { data: sessionData } = await authClient.getSession();
+const token = sessionData?.session?.token;
 
 type FilterValue = "all" | CaseType;
 
@@ -37,7 +40,10 @@ const CaseFileList: React.FC = () => {
       try {
         const response = await fetch(CASE_FILES_ENDPOINT, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (!response.ok) {
@@ -77,7 +83,9 @@ const CaseFileList: React.FC = () => {
         if (!search.trim()) return true;
         const q = search.trim().toLowerCase();
         return (
-          file.reference?.toLowerCase().includes(q) ||
+          `ACA +${file.caseNumber || null}/${file.partialCase || null}`
+            ?.toLowerCase()
+            .includes(q) ||
           file.courtCaseNumber?.toLowerCase().includes(q) ||
           file.partyOne?.toLowerCase().includes(q) ||
           file.partyTwo?.toLowerCase().includes(q) ||

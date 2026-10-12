@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import "./Fillereg.css";
 import logoImg from "../assets/cropped-Logo-Abayo-Co.-Advocates.png";
+import { authClient } from "../lib/auth";
 
 type CaseType =
   | "civil"
@@ -499,17 +500,55 @@ const Fillereg: React.FC = () => {
   const currentCaseType = getCaseType(fileType);
   const caseConfig = CASE_TYPES[currentCaseType];
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-
     const data = Object.fromEntries(formData.entries());
 
-    console.log("Case data:", data);
-    console.log("Full name:", fullName);
-    console.log("Department:", dep);
-    console.log("File type:", currentCaseType);
+    setSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+
+    try {
+      // JWT for the logged-in user; the server verifies it and, when
+      // "Advocate assigned" is blank, assigns the file to that user.
+      const { data: sessionData } = await authClient.getSession();
+      const token = sessionData?.session?.token;
+
+      if (!token) {
+        throw new Error("You are signed out. Please sign in again.");
+      }
+
+      const response = await fetch(`/api/case-files/${currentCaseType}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...data, fullName, dep }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || `Request failed with status ${response.status}`,
+        );
+      }
+
+      setSubmitSuccess(true);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Failed to save case file.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -831,9 +870,46 @@ const Fillereg: React.FC = () => {
           <div className="footer">www.abayo.law</div>
         </div>
       </form>
-      <div>
-        <button type="submit" form="caseForm" className="submit-button">
-          Submit Case
+
+      <div className="submit-container">
+        {submitError && (
+          <div className="status-message error-message">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>{submitError}</span>
+          </div>
+        )}
+
+        {submitSuccess && (
+          <div className="status-message success-message">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Case file saved successfully.</span>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          form="caseForm"
+          className={`submit-button ${submitting ? "loading" : ""}`}
+          disabled={submitting}
+        >
+          {submitting ? "Saving..." : "Submit Case File"}
         </button>
       </div>
     </div>

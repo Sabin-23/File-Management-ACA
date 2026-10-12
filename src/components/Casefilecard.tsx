@@ -2,16 +2,11 @@ import React from "react";
 import { CASE_TYPES, getCaseType } from "./caseTypes";
 import "./Casefilecard.css";
 
-/**
- * Matches what GET /api/case-files returns. Keep in sync with
- * server/routes/caseFiles.js.
- */
 export interface CaseFileSummary {
   id: string;
   fileType: string;
-  /** Full formatted ACA reference, e.g. "ACA 0484/COM/2026" */
-  reference: string;
-  /** The court's own case number, if any, e.g. "RCOM 00343/2025/TC" */
+  caseNumber?: number;
+  partialCase?: string;
   courtCaseNumber?: string;
   partyOne?: string;
   partyTwo?: string;
@@ -46,7 +41,7 @@ const CaseFileCard: React.FC<CaseFileCardProps> = ({ file, onClick }) => {
       <div className="case-file-card-body">
         <div className="case-file-card-type">{config.label}</div>
 
-        <div className="case-file-card-ref">{file.reference}</div>
+        <div className="case-file-card-ref">{`ACA ${file.caseNumber || null}/${file.partialCase || null}`}</div>
 
         {file.courtCaseNumber && (
           <div className="case-file-card-court-ref">
