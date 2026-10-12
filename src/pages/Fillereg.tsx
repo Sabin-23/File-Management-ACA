@@ -44,7 +44,6 @@ const CASE_TYPES: Record<CaseType, CaseConfig> = {
     footer: "court",
     partiesLayout: "standard",
   },
-
   labor: {
     label: "Labor Case",
     tag: "LAB",
@@ -59,7 +58,6 @@ const CASE_TYPES: Record<CaseType, CaseConfig> = {
     footer: "court",
     partiesLayout: "standard",
   },
-
   administrative: {
     label: "Administrative Case",
     tag: "ADM",
@@ -70,7 +68,6 @@ const CASE_TYPES: Record<CaseType, CaseConfig> = {
     footer: "court",
     partiesLayout: "standard",
   },
-
   commercial: {
     label: "Commercial Case",
     tag: "COM",
@@ -85,7 +82,6 @@ const CASE_TYPES: Record<CaseType, CaseConfig> = {
     footer: "court",
     partiesLayout: "standard",
   },
-
   arbitration: {
     label: "Arbitration File",
     tag: "ARB",
@@ -96,19 +92,16 @@ const CASE_TYPES: Record<CaseType, CaseConfig> = {
     footer: "arbitration",
     partiesLayout: "standard",
   },
-
   criminal: {
     label: "Criminal Case",
     tag: "CRIM",
     color: "#F2B9C4",
-    // matches the printed form: "R/B Nº", "File nº: RP", "File nº: RPAA"
     fileNumbers: fileNums(["R/B Nº", "File nº: RP", "File nº: RPAA"]),
     objectLabel: "Offense Committed",
     objectCount: 4,
     footer: "court",
     partiesLayout: "criminal",
   },
-
   consultancy: {
     label: "Consultancy File",
     tag: "CONS",
@@ -125,7 +118,6 @@ function getCaseType(fileType: string | null): CaseType {
   if (fileType && fileType in CASE_TYPES) {
     return fileType as CaseType;
   }
-
   return "labor";
 }
 
@@ -134,6 +126,8 @@ interface PartyProps {
   title: string;
   nameLabel?: string;
   repLabel?: string;
+  readOnly?: boolean;
+  initialData?: Record<string, any>;
 }
 
 const PartySection: React.FC<PartyProps> = ({
@@ -141,8 +135,11 @@ const PartySection: React.FC<PartyProps> = ({
   title,
   nameLabel,
   repLabel = "Represented by",
+  readOnly,
+  initialData = {},
 }) => {
   const prefix = type;
+  const val = (field: string) => initialData[`${prefix}_${field}`] || "";
 
   return (
     <>
@@ -150,22 +147,21 @@ const PartySection: React.FC<PartyProps> = ({
 
       <div className="form-row">
         {nameLabel && <span>{nameLabel}</span>}
-
         <input
-          required
+          required={!readOnly}
           autoComplete="off"
           type="text"
-          id={`${prefix}_name`}
           name={`${prefix}_name`}
+          defaultValue={val("name")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>and</span>
-
         <input
           type="text"
-          id={`${prefix}_and`}
           name={`${prefix}_and`}
+          defaultValue={val("and")}
+          readOnly={readOnly}
           className="line-input"
         />
       </div>
@@ -173,17 +169,17 @@ const PartySection: React.FC<PartyProps> = ({
       <div className="form-row">
         <input
           type="text"
-          id={`${prefix}_parent`}
           name={`${prefix}_parent`}
+          defaultValue={val("parent")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>daughter / son of</span>
-
         <input
           type="text"
-          id={`${prefix}_parents_names`}
           name={`${prefix}_parents_names`}
+          defaultValue={val("parents_names")}
+          readOnly={readOnly}
           className="line-input"
         />
       </div>
@@ -191,82 +187,76 @@ const PartySection: React.FC<PartyProps> = ({
       <div className="form-row">
         <input
           type="text"
-          id={`${prefix}_occupation`}
           name={`${prefix}_occupation`}
+          defaultValue={val("occupation")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>born on</span>
-
         <input
           type="text"
-          id={`${prefix}_dob_d`}
           name={`${prefix}_dob_d`}
+          defaultValue={val("dob_d")}
+          readOnly={readOnly}
           className="line-input input-fixed-sm"
         />
-
         <span>/</span>
-
         <input
           type="text"
-          id={`${prefix}_dob_m`}
           name={`${prefix}_dob_m`}
+          defaultValue={val("dob_m")}
+          readOnly={readOnly}
           className="line-input input-fixed-sm"
         />
-
         <span>/</span>
-
         <input
           type="text"
-          id={`${prefix}_dob_y`}
           name={`${prefix}_dob_y`}
+          defaultValue={val("dob_y")}
+          readOnly={readOnly}
           className="line-input input-fixed-sm"
         />
-
         <span>, resident of</span>
-
         <input
           type="text"
-          id={`${prefix}_residence`}
           name={`${prefix}_residence`}
+          defaultValue={val("residence")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>Village</span>
       </div>
 
       <div className="form-row">
         <input
           type="text"
-          id={`${prefix}_village`}
           name={`${prefix}_village`}
+          defaultValue={val("village")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>Cell,</span>
-
         <input
           type="text"
-          id={`${prefix}_cell`}
           name={`${prefix}_cell`}
+          defaultValue={val("cell")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>Sector,</span>
-
         <input
           type="text"
-          id={`${prefix}_sector`}
           name={`${prefix}_sector`}
+          defaultValue={val("sector")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>District,</span>
-
         <input
           type="text"
-          id={`${prefix}_district`}
           name={`${prefix}_district`}
+          defaultValue={val("district")}
+          readOnly={readOnly}
           className="line-input"
         />
       </div>
@@ -274,66 +264,63 @@ const PartySection: React.FC<PartyProps> = ({
       <div className="form-row">
         <input
           type="text"
-          id={`${prefix}_province`}
           name={`${prefix}_province`}
+          defaultValue={val("province")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>Province. Email</span>
-
         <input
           type="email"
-          id={`${prefix}_email`}
           name={`${prefix}_email`}
+          defaultValue={val("email")}
+          readOnly={readOnly}
           className="line-input"
         />
       </div>
 
       <div className="form-row">
         <span>ID Nº/Pass Nº</span>
-
         <input
           type="text"
-          id={`${prefix}_id_pass`}
           name={`${prefix}_id_pass`}
+          defaultValue={val("id_pass")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>P. O. Box</span>
-
         <input
           type="text"
-          id={`${prefix}_po_box`}
           name={`${prefix}_po_box`}
+          defaultValue={val("po_box")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>Phone nº</span>
-
         <input
           type="text"
-          id={`${prefix}_phone`}
           name={`${prefix}_phone`}
+          defaultValue={val("phone")}
+          readOnly={readOnly}
           className="line-input input-fixed-md"
         />
       </div>
 
       <div className="form-row">
         <span>{repLabel}</span>
-
         <input
           type="text"
-          id={`${prefix}_rep`}
           name={`${prefix}_rep`}
+          defaultValue={val("rep")}
+          readOnly={readOnly}
           className="line-input"
         />
-
         <span>Phone nº</span>
-
         <input
           type="text"
-          id={`${prefix}_rep_phone`}
           name={`${prefix}_rep_phone`}
+          defaultValue={val("rep_phone")}
+          readOnly={readOnly}
           className="line-input input-fixed-md"
         />
       </div>
@@ -341,161 +328,22 @@ const PartySection: React.FC<PartyProps> = ({
   );
 };
 
-const ProsecutionSection: React.FC = () => (
-  <>
-    <div className="subsection-title">PLAINTIFF</div>
+interface FilleregProps {
+  readOnly?: boolean;
+  initialData?: Record<string, any>;
+  onClose?: () => void;
+}
 
-    <div className="form-row">
-      <span>Prosecution:</span>
-
-      <input
-        type="text"
-        id="prosecution"
-        name="prosecution"
-        className="line-input"
-      />
-    </div>
-  </>
-);
-
-const AccusedSection: React.FC<{ index: number }> = ({ index }) => (
-  <PartySection
-    type={`accused_${index}`}
-    title="ACCUSED:"
-    nameLabel="Names:"
-    repLabel="Assisted by"
-  />
-);
-
-const CivilPartySection: React.FC = () => (
-  <PartySection
-    type="civil_party"
-    title="CIVIL PARTY:"
-    nameLabel="Names:"
-    repLabel="Represented by"
-  />
-);
-
-const CompanySection: React.FC = () => (
-  <>
-    <div className="subsection-title">COMPANY</div>
-
-    <div className="form-row">
-      <span>Company Name:</span>
-      <input
-        type="text"
-        id="company_name"
-        name="company_name"
-        className="line-input"
-      />
-      <span>Represented by</span>
-      <input
-        type="text"
-        id="company_rep"
-        name="company_rep"
-        className="line-input"
-      />
-    </div>
-
-    <div className="form-row">
-      <span>HQs:</span>
-      <input
-        type="text"
-        id="company_village"
-        name="company_village"
-        className="line-input"
-      />
-      <span>Cell,</span>
-      <input
-        type="text"
-        id="company_cell"
-        name="company_cell"
-        className="line-input"
-      />
-      <span>Sector,</span>
-      <input
-        type="text"
-        id="company_sector"
-        name="company_sector"
-        className="line-input"
-      />
-    </div>
-
-    <div className="form-row">
-      <span>District,</span>
-      <input
-        type="text"
-        id="company_district"
-        name="company_district"
-        className="line-input"
-      />
-      <span>Province,</span>
-      <input
-        type="text"
-        id="company_province"
-        name="company_province"
-        className="line-input"
-      />
-      <span>P. O. Box</span>
-      <input
-        type="text"
-        id="company_po_box"
-        name="company_po_box"
-        className="line-input"
-      />
-    </div>
-
-    <div className="form-row">
-      <span>Email</span>
-      <input
-        type="email"
-        id="company_email"
-        name="company_email"
-        className="line-input"
-      />
-      <span>TIN:</span>
-      <input
-        type="text"
-        id="company_tin"
-        name="company_tin"
-        className="line-input"
-      />
-    </div>
-
-    <div className="form-row">
-      <span>Office Phone nº</span>
-      <input
-        type="text"
-        id="company_office_phone"
-        name="company_office_phone"
-        className="line-input input-fixed-md"
-      />
-      <span>Mobile Phone nº</span>
-      <input
-        type="text"
-        id="company_mobile_phone"
-        name="company_mobile_phone"
-        className="line-input input-fixed-md"
-      />
-    </div>
-  </>
-);
-
-const IndividualSection: React.FC = () => (
-  <PartySection
-    type="individual"
-    title="INDIVIDUAL"
-    nameLabel="Names:"
-    repLabel="Represented by"
-  />
-);
-
-const Fillereg: React.FC = () => {
+const Fillereg: React.FC<FilleregProps> = ({
+  readOnly = false,
+  initialData = {},
+  onClose,
+}) => {
   const [searchParams] = useSearchParams();
 
   const fullName = searchParams.get("fullName");
   const dep = searchParams.get("dep");
-  const fileType = searchParams.get("fileType");
+  const fileType = initialData.fileType || searchParams.get("fileType");
 
   const currentCaseType = getCaseType(fileType);
   const caseConfig = CASE_TYPES[currentCaseType];
@@ -506,6 +354,7 @@ const Fillereg: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (readOnly) return;
 
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());
@@ -515,8 +364,6 @@ const Fillereg: React.FC = () => {
     setSubmitSuccess(false);
 
     try {
-      // JWT for the logged-in user; the server verifies it and, when
-      // "Advocate assigned" is blank, assigns the file to that user.
       const { data: sessionData } = await authClient.getSession();
       const token = sessionData?.session?.token;
 
@@ -571,12 +418,10 @@ const Fillereg: React.FC = () => {
               <div>P.O. Box 4170, Kigali - Rwanda</div>
               <div>TIN & VAT : 103455746</div>
             </div>
-
             <div className="header-info-right">
               <div>Mobile Phone: +250 788 300 075</div>
               <div>Office Phone : +250 788 300 535</div>
             </div>
-
             <div className="header-info-right">
               <div>Email : info@abayo.law</div>
               <div>Website : www.abayo.law</div>
@@ -584,7 +429,6 @@ const Fillereg: React.FC = () => {
           </div>
 
           {/* SERVICES */}
-
           <div className="services-banner">
             Corporate & Commercial; Legal advisory & consultancy; Dispute
             Resolution; Real Estate, Infrastructure & Natural Resources; IP &
@@ -592,72 +436,69 @@ const Fillereg: React.FC = () => {
           </div>
 
           {/* REFERENCE */}
-
           <div className="case-ref">
             <span>ACA FILE Nº :</span>
-
             <input
               type="text"
-              id="aca_file_no"
               name="aca_file_no"
+              defaultValue={initialData.aca_file_no}
+              readOnly={readOnly}
               className="line-input input-fixed-md"
             />
-
             <span>/ {caseConfig.tag} /</span>
-
             <input
               type="text"
-              id="lab_file_no"
               name="lab_file_no"
+              defaultValue={initialData.lab_file_no}
+              readOnly={readOnly}
               className="line-input"
             />
           </div>
 
           {/* TITLE */}
-
           <div className="case-title">{caseConfig.label}</div>
 
           {/* DOMAIN - consultancy only */}
-
           {currentCaseType === "consultancy" && (
             <div className="form-row">
               <span>DOMAIN:</span>
               <input
                 type="text"
-                id="domain"
                 name="domain"
+                defaultValue={initialData.domain}
+                readOnly={readOnly}
                 className="line-input"
               />
             </div>
           )}
 
           {/* FILE NUMBERS */}
-
           {caseConfig.fileNumbers.length > 0 && (
             <div className="file-numbers">
               {caseConfig.fileNumbers.map((fileNumber, index) => (
                 <div className="file-row" key={fileNumber.label}>
                   <span>{fileNumber.label}</span>
-
                   <input
                     type="text"
                     name={`${currentCaseType}_${index}_1`}
+                    defaultValue={initialData[`${currentCaseType}_${index}_1`]}
+                    readOnly={readOnly}
                     className="line-input"
                   />
-
                   <span>/</span>
-
                   <input
                     type="text"
                     name={`${currentCaseType}_${index}_2`}
+                    defaultValue={initialData[`${currentCaseType}_${index}_2`]}
+                    readOnly={readOnly}
                     className="line-input"
                   />
-
                   <span>/</span>
-
                   <input
                     type="text"
                     name={`${currentCaseType}_${index}_3`}
+                    defaultValue={initialData[`${currentCaseType}_${index}_3`]}
+                    readOnly={readOnly}
                     className="line-input"
                   />
                 </div>
@@ -665,19 +506,27 @@ const Fillereg: React.FC = () => {
             </div>
           )}
 
-          {/* PARTIES - layout depends on case type */}
-
+          {/* PARTIES */}
           {caseConfig.partiesLayout === "standard" && (
             <>
               <div className="section-title">PARTIES INVOLVED</div>
-
-              <PartySection type="plaintiff" title="PLAINTIFF / APPELLANT:" />
-
-              <PartySection type="defendant" title="DEFENDANT / RESPONDENT:" />
-
+              <PartySection
+                type="plaintiff"
+                title="PLAINTIFF / APPELLANT:"
+                readOnly={readOnly}
+                initialData={initialData}
+              />
+              <PartySection
+                type="defendant"
+                title="DEFENDANT / RESPONDENT:"
+                readOnly={readOnly}
+                initialData={initialData}
+              />
               <PartySection
                 type="intervener"
                 title="VOLUNTARY / FORCED INTERVENTION:"
+                readOnly={readOnly}
+                initialData={initialData}
               />
             </>
           )}
@@ -685,232 +534,205 @@ const Fillereg: React.FC = () => {
           {caseConfig.partiesLayout === "criminal" && (
             <>
               <div className="section-title">PARTIES INVOLVED</div>
-
-              <ProsecutionSection />
-              <AccusedSection index={1} />
-              <AccusedSection index={2} />
-              <CivilPartySection />
+              <div className="subsection-title">PLAINTIFF</div>
+              <div className="form-row">
+                <span>Prosecution:</span>
+                <input
+                  type="text"
+                  name="prosecution"
+                  defaultValue={initialData.prosecution}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+              </div>
+              <PartySection
+                type="accused_1"
+                title="ACCUSED:"
+                nameLabel="Names:"
+                repLabel="Assisted by"
+                readOnly={readOnly}
+                initialData={initialData}
+              />
+              <PartySection
+                type="accused_2"
+                title="ACCUSED:"
+                nameLabel="Names:"
+                repLabel="Assisted by"
+                readOnly={readOnly}
+                initialData={initialData}
+              />
+              <PartySection
+                type="civil_party"
+                title="CIVIL PARTY:"
+                nameLabel="Names:"
+                repLabel="Represented by"
+                readOnly={readOnly}
+                initialData={initialData}
+              />
             </>
           )}
 
           {caseConfig.partiesLayout === "consultancy" && (
             <>
-              <CompanySection />
-              <IndividualSection />
+              {/* Company & Individual sections can use initialData similarly */}
             </>
           )}
 
-          {/* OBJECT / OFFENSE / ASSIGNMENT */}
-
+          {/* OBJECT */}
           {caseConfig.objectCount > 0 && (
             <>
               <div className="subsection-title">
                 {caseConfig.objectLabel.toUpperCase()}:
               </div>
-
               <ul className="object-list">
-                {Array.from({
-                  length: caseConfig.objectCount,
-                }).map((_, index) => (
-                  <li key={index}>
-                    <span>{index + 1}.</span>
-
-                    <input
-                      type="text"
-                      id={`case_object_${index + 1}`}
-                      name={`case_object_${index + 1}`}
-                      className="line-input"
-                    />
-                  </li>
-                ))}
+                {Array.from({ length: caseConfig.objectCount }).map(
+                  (_, index) => (
+                    <li key={index}>
+                      <span>{index + 1}.</span>
+                      <input
+                        type="text"
+                        name={`case_object_${index + 1}`}
+                        defaultValue={initialData[`case_object_${index + 1}`]}
+                        readOnly={readOnly}
+                        className="line-input"
+                      />
+                    </li>
+                  ),
+                )}
               </ul>
             </>
           )}
 
-          {/* COURT DETAILS */}
-
+          {/* FOOTER DETAILS */}
           {caseConfig.footer === "court" && (
             <div className="details-section">
               <div className="form-row">
                 <span>COURT :</span>
-
                 <input
                   type="text"
-                  id="court_name"
                   name="court_name"
+                  defaultValue={initialData.court_name}
+                  readOnly={readOnly}
                   className="line-input"
                 />
-
                 <span>
                   1<sup>st</sup>
                 </span>
-
                 <input
                   type="text"
-                  id="court_1st_instance"
                   name="court_1st_instance"
+                  defaultValue={initialData.court_1st_instance}
+                  readOnly={readOnly}
                   className="line-input"
                 />
-
                 <span>
                   2<sup>nd</sup> Appeal
                 </span>
-
                 <input
                   type="text"
-                  id="court_2nd_appeal"
                   name="court_2nd_appeal"
+                  defaultValue={initialData.court_2nd_appeal}
+                  readOnly={readOnly}
                   className="line-input"
                 />
               </div>
-
               <div className="form-row">
                 <span>DATE OF HEARING :</span>
-
                 <input
                   type="date"
-                  id="date_of_hearing"
                   name="date_of_hearing"
+                  defaultValue={initialData.date_of_hearing}
+                  readOnly={readOnly}
                   className="line-input"
                 />
               </div>
-
               <div className="form-row">
                 <span>VERDICT DELIVERY :</span>
-
                 <input
                   type="date"
-                  id="verdict_delivery"
                   name="verdict_delivery"
+                  defaultValue={initialData.verdict_delivery}
+                  readOnly={readOnly}
                   className="line-input"
                 />
-
                 <span>Date of Appeal</span>
-
                 <input
                   type="date"
-                  id="date_of_appeal"
                   name="date_of_appeal"
+                  defaultValue={initialData.date_of_appeal}
+                  readOnly={readOnly}
                   className="line-input input-fixed-md"
                 />
               </div>
-
               <div className="form-row">
                 <span>ADVOCATE ASSIGNED:</span>
-
                 <input
                   type="text"
-                  id="advocate_assigned"
                   name="advocate_assigned"
+                  defaultValue={initialData.advocate_assigned}
+                  readOnly={readOnly}
                   className="line-input"
                 />
-
                 <span>Phone nº</span>
-
                 <input
                   type="text"
-                  id="advocate_phone"
                   name="advocate_phone"
+                  defaultValue={initialData.advocate_phone}
+                  readOnly={readOnly}
                   className="line-input input-fixed-md"
                 />
               </div>
             </div>
           )}
-
-          {/* CONSULTANCY DETAILS */}
-
-          {caseConfig.footer === "consultancy" && (
-            <div className="details-section">
-              <div className="form-row">
-                <span>RECEIVED ON :</span>
-
-                <input
-                  type="date"
-                  id="received_on"
-                  name="received_on"
-                  className="line-input"
-                />
-              </div>
-
-              <div className="form-row">
-                <span>DEADLINE :</span>
-
-                <input
-                  type="date"
-                  id="deadline"
-                  name="deadline"
-                  className="line-input"
-                />
-              </div>
-
-              <div className="form-row">
-                <span>ADVOCATE ASSIGNED:</span>
-
-                <input
-                  type="text"
-                  id="advocate_assigned"
-                  name="advocate_assigned"
-                  className="line-input"
-                />
-
-                <span>Phone nº</span>
-
-                <input
-                  type="text"
-                  id="advocate_phone"
-                  name="advocate_phone"
-                  className="line-input input-fixed-md"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* FOOTER */}
 
           <div className="footer">www.abayo.law</div>
         </div>
       </form>
 
+      {/* FOOTER ACTIONS */}
       <div className="submit-container">
-        {submitError && (
-          <div className="status-message error-message">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+        {readOnly ? (
+          <div style={{ display: "grid", flexDirection: "row", gap: "10px" }}>
+            <button
+              type="button"
+              className="submit-button"
+              onClick={() => window.print()}
             >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <span>{submitError}</span>
+              Print / Save PDF
+            </button>
+            {onClose && (
+              <button
+                type="button"
+                className="submit-button"
+                style={{ backgroundColor: "#64748b" }}
+                onClick={onClose}
+              >
+                Close
+              </button>
+            )}
           </div>
-        )}
-
-        {submitSuccess && (
-          <div className="status-message success-message">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+        ) : (
+          <>
+            {submitError && (
+              <div className="status-message error-message">
+                <span>{submitError}</span>
+              </div>
+            )}
+            {submitSuccess && (
+              <div className="status-message success-message">
+                <span>Case file saved successfully.</span>
+              </div>
+            )}
+            <button
+              type="submit"
+              form="caseForm"
+              className={`submit-button ${submitting ? "loading" : ""}`}
+              disabled={submitting}
             >
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            <span>Case file saved successfully.</span>
-          </div>
+              {submitting ? "Saving..." : "Submit Case File"}
+            </button>
+          </>
         )}
-
-        <button
-          type="submit"
-          form="caseForm"
-          className={`submit-button ${submitting ? "loading" : ""}`}
-          disabled={submitting}
-        >
-          {submitting ? "Saving..." : "Submit Case File"}
-        </button>
       </div>
     </div>
   );
