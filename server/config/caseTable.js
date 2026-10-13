@@ -109,6 +109,8 @@ export const CASE_TABLES = {
     columns: { 
       partial_case: 'partial_case',
       case_number: 'case_number',
+      partyOne: 'plaintiff', 
+      partyTwo: 'accused',
       plaintiff: 'plaintiff',
       accused: 'accused',
       civil_party: 'civil_party',
@@ -123,8 +125,10 @@ export const CASE_TABLES = {
         : new Date().getFullYear();
 
       return {
+        partyOne: formData.prosecution || formData.plaintiff_name || null,
         plaintiff: formData.prosecution || null,
         accused: formData.accused_1_name + (formData.accused_2_name ? ` & ${formData.accused_2_name}` : '') || null,
+        partyTwo: formData.accused_1_name + (formData.accused_2_name ? ` & ${formData.accused_2_name}` : '') || null,
         civil_party: formData.civil_party_name || null,
         year,
         createdBy: initialsFrom(advocate.name),

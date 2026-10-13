@@ -1,6 +1,6 @@
 export type CaseType =
   | "civil"
-  | "labor"
+  | "labour"
   | "administrative"
   | "commercial"
   | "arbitration"
@@ -39,8 +39,8 @@ export const CASE_TYPES: Record<CaseType, CaseConfig> = {
     partiesLayout: "standard",
   },
 
-  labor: {
-    label: "Labor Case",
+  labour: {
+    label: "Labour Case",
     tag: "LAB",
     color: "#BFE29A",
     fileNumbers: fileNums(["File nº: RLAB", "File nº: RLABA", "File nº: RLABAA"]),
@@ -110,5 +110,5 @@ export function getCaseType(fileType: string | null | undefined): CaseType {
   if (fileType && fileType in CASE_TYPES) {
     return fileType as CaseType;
   }
-  return "labor";
+  return "labour";
 }

@@ -37,6 +37,7 @@ function buildListQuery({ onlyOwn }) {
         ${col('courtCaseNumber')}::text AS court_case_number,
         ${col('partyOne')}::text        AS party_one,
         ${col('partyTwo')}::text        AS party_two,
+        ${col('civil_party')}::text     AS civil_party,
         ${col('year')}                  AS year,
         ${col('createdBy')}::text       AS created_by
       FROM ${cfg.table}
@@ -69,6 +70,7 @@ router.get('/', requireAuth, async (req, res) => {
       courtCaseNumber: row.court_case_number || undefined,
       partyOne: row.party_one || undefined,
       partyTwo: row.party_two || undefined,
+      civil_party: row.civil_party || undefined,
       year: row.year ?? undefined,
       createdBy: row.created_by || undefined,
     }));
@@ -156,6 +158,192 @@ router.post('/:fileType', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Failed to insert case file:', err);
     res.status(500).json({ error: 'Failed to save case file.' });
+  }
+});
+//UPDATE a case file
+router.put('/:fileType/:case_number', requireAuth, async (req, res) => {
+  const { fileType, case_number } = req.params;
+  const cfg = CASE_TABLES[fileType];
+
+  if (!cfg) {
+    return res.status(400).json({ error: 'Invalid case type.' });
+  }
+
+  try {
+    const admin = await isAdmin(req.user.id);
+
+    // If not admin, check ownership using parameterized query
+    if (!admin) {
+      const checkQuery = `SELECT case_number FROM ${cfg.table} WHERE case_number = $1 AND adv_id = $2`;
+      const existing = await sql.query(checkQuery, [case_number, req.user.id]);
+
+      if (existing.length === 0) {
+        return res
+          .status(403)
+          .json({ error: 'Unauthorized to update this case file.' });
+      }
+    }
+
+    // Resolve assigned advocate or fall back to current user
+    const advocate = await resolveAdvocate(
+      req.body?.advocate_assigned,
+      req.user.id
+    );
+
+    if (!advocate) {
+      return res.status(400).json({
+        error: 'Your account was not found in neon_auth.user.',
+      });
+    }
+
+    // Map form body into table structure
+    const row = cfg.mapFormToRow(req.body ?? {}, { advocate });
+
+    // Build dynamic UPDATE set clauses and parameters safely
+    const setClauses = [];
+    const values = [];
+    let paramIndex = 1;
+
+    for (const [field, column] of Object.entries(cfg.columns)) {
+      if (row[field] !== undefined) {
+        let val = row[field];
+
+        // Sanitize objects/arrays into JSON strings or null if undefined
+        if (typeof val === 'object' && val !== null) {
+          val = JSON.stringify(val);
+        }
+
+        setClauses.push(`${column} = $${paramIndex++}`);
+        values.push(val ?? null);
+      }
+    }
+
+    if (setClauses.length === 0) {
+      return res.status(400).json({ error: 'No fields to update.' });
+    }
+
+    // Append the record ID to values for the WHERE clause
+    values.push(case_number);
+    const updateQuery = `UPDATE ${cfg.table} SET ${setClauses.join(', ')} WHERE case_number = $${paramIndex} RETURNING *`;
+
+    const updated = await sql.query(updateQuery, values);
+
+    if (updated.length === 0) {
+      return res.status(404).json({ error: 'Case file not found.' });
+    }
+
+    res.json({ ok: true, row: updated[0] });
+  } catch (err) {
+    console.error('Failed to update case file:', err);
+    res.status(500).json({ error: 'Failed to update case file.' });
+  }
+});
+
+router.delete('/:fileType/:case_number', requireAuth, async (req, res) => {
+  const { fileType, case_number } = req.params;
+  const cfg = CASE_TABLES[fileType];
+
+  if (!cfg) {
+    return res.status(400).json({ error: 'Invalid case type.' });
+  }
+
+  try {
+    const admin = await isAdmin(req.user.id);
+
+    if (!admin) {
+      const checkQuery = `SELECT case_number FROM ${cfg.table} WHERE case_number = $1 AND adv_id = $2`;
+      const existing = await sql.query(checkQuery, [case_number, req.user.id]);
+
+      if (existing.length === 0) {
+        return res
+          .status(403)
+          .json({ error: 'Unauthorized to delete this file.' });
+      }
+    }
+
+    const deleteQuery = `DELETE FROM ${cfg.table} WHERE case_number = $1`;
+    await sql.query(deleteQuery, [case_number]);
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Failed to delete case file:', err);
+    res.status(500).json({ error: 'Failed to delete case file.' });
+  }
+});
+
+function initialsFrom(name) {
+  if (!name) return null;
+  return (
+    name
+      .trim()
+      .split(/\s+/)
+      .map((word) => word[0]?.toUpperCase())
+      .join('') || null
+  );
+}
+
+
+router.patch('/:fileType/:case_number/transfer', requireAuth, async (req, res) => {
+  const { fileType, case_number } = req.params;
+  const { advocateName } = req.body;
+  const cfg = CASE_TABLES[fileType];
+
+  if (!cfg) {
+    return res.status(400).json({ error: 'Invalid case type.' });
+  }
+
+  if (!advocateName || !advocateName.trim()) {
+    return res.status(400).json({ error: 'Advocate name is required.' });
+  }
+
+  try {
+    const admin = await isAdmin(req.user.id);
+    if (!admin) {
+      return res
+        .status(403)
+        .json({ error: 'Only administrators can transfer files.' });
+    }
+
+    const targetName = advocateName.trim();
+    const advocateQuery = `
+      SELECT id, name FROM neon_auth."user" 
+      WHERE LOWER(name) = LOWER($1) OR LOWER(name) LIKE LOWER($2)
+      LIMIT 1
+    `;
+    const advocateRows = await sql.query(advocateQuery, [targetName, `%${targetName}%`]);
+
+    if (advocateRows.length === 0) {
+      return res.status(444 || 404).json({
+        error: `No advocate found matching "${targetName}" in neon_auth.user.`,
+      });
+    }
+
+    const targetAdvocate = advocateRows[0];
+    const newAdvocateId = targetAdvocate.id;
+    const newInitials = initialsFrom(targetAdvocate.name);
+
+
+    const transferQuery = `
+      UPDATE ${cfg.table} 
+      SET ${cfg.columns.advocateId} = $1, ${cfg.columns.createdBy} = $2 
+      WHERE case_number = $3 
+      RETURNING *
+    `;
+    const updated = await sql.query(transferQuery, [
+      newAdvocateId,
+      newInitials,
+      case_number,
+    ]);
+
+    res.json({
+      ok: true,
+      row: updated[0],
+      assignedTo: targetAdvocate.name,
+      initials: newInitials,
+    });
+  } catch (err) {
+    console.error('Failed to transfer case file:', err);
+    res.status(500).json({ error: 'Failed to transfer case file.' });
   }
 });
 

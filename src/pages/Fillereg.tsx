@@ -6,7 +6,7 @@ import { authClient } from "../lib/auth";
 
 type CaseType =
   | "civil"
-  | "labor"
+  | "labour"
   | "administrative"
   | "commercial"
   | "arbitration"
@@ -44,8 +44,8 @@ const CASE_TYPES: Record<CaseType, CaseConfig> = {
     footer: "court",
     partiesLayout: "standard",
   },
-  labor: {
-    label: "Labor Case",
+  labour: {
+    label: "Labour Case",
     tag: "LAB",
     color: "#BFE29A",
     fileNumbers: fileNums([
@@ -118,7 +118,7 @@ function getCaseType(fileType: string | null): CaseType {
   if (fileType && fileType in CASE_TYPES) {
     return fileType as CaseType;
   }
-  return "labor";
+  return "labour";
 }
 
 interface PartyProps {
@@ -332,12 +332,14 @@ interface FilleregProps {
   readOnly?: boolean;
   initialData?: Record<string, any>;
   onClose?: () => void;
+  onSubmit?: (data: Record<string, any>) => Promise<void>;
 }
 
 const Fillereg: React.FC<FilleregProps> = ({
   readOnly = false,
   initialData = {},
   onClose,
+  onSubmit,
 }) => {
   const [searchParams] = useSearchParams();
 
@@ -364,6 +366,11 @@ const Fillereg: React.FC<FilleregProps> = ({
     setSubmitSuccess(false);
 
     try {
+      if (onSubmit) {
+        await onSubmit(data);
+        setSubmitSuccess(true);
+        return;
+      }
       const { data: sessionData } = await authClient.getSession();
       const token = sessionData?.session?.token;
 
