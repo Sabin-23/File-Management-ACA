@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Fillereg from "../pages/Fillereg";
 import { authClient } from "../lib/auth";
-
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+import { API_BASE } from "../config";
 
 export default function CaseFileViewPage() {
   const { fileType, id } = useParams();
