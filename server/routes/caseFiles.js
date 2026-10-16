@@ -363,7 +363,7 @@ router.get('/export/:fileType', requireAuth, async (req, res) => {
   }
 
   try {
-    const query = `SELECT * FROM ${cfg.table} ORDER BY case_number DESC`;
+    const query = `SELECT * FROM ${cfg.table} ORDER BY case_number ASC`;
     const rows = await sql.query(query);
 
     if (rows.length === 0) {
