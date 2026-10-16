@@ -39,7 +39,10 @@ function buildListQuery({ onlyOwn }) {
         ${col('partyTwo')}::text        AS party_two,
         ${col('civil_party')}::text     AS civil_party,
         ${col('year')}                  AS year,
-        ${col('createdBy')}::text       AS created_by
+        ${col('createdBy')}::text       AS created_by,
+        ${col('company')}::text      AS company,
+        ${col('individual')}::text      AS individual,
+        ${col('assignments')}::text      AS assignments
       FROM ${cfg.table}
       ${ownFilter(cfg, onlyOwn)}
     `;
@@ -73,6 +76,9 @@ router.get('/', requireAuth, async (req, res) => {
       civil_party: row.civil_party || undefined,
       year: row.year ?? undefined,
       createdBy: row.created_by || undefined,
+      individual: row.individual || undefined,
+      company: row.company || undefined,
+      assignments: row.assignments || undefined
     }));
 
     res.json(files);
