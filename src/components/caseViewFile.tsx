@@ -55,7 +55,10 @@ export default function CaseFileViewPage() {
           advocate_assigned: rawCase.createdBy || "",
           prosecution: isCriminal ? rawCase.partyOne || "" : "",
           accused_1_name: isCriminal ? rawCase.partyTwo || "" : "",
-          civil_party_name: !isCriminal ? rawCase.civil_party || "" : "",
+          civil_party_name: isCriminal ? rawCase.civil_party || "" : "",
+          individual_name: rawCase.individual || "",
+          company_name: rawCase.company || "",
+          case_object_1: rawCase.assignments || "",
         };
 
         setCaseData(mappedData);

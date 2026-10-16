@@ -11,8 +11,9 @@ export interface CaseFileSummary {
   partyOne?: string;
   partyTwo?: string;
   year?: number;
-  /** Advocate initials */
   createdBy?: string;
+  individual?: string;
+  company?: string;
 }
 
 interface CaseFileCardProps {
@@ -49,11 +50,12 @@ const CaseFileCard: React.FC<CaseFileCardProps> = ({ file, onClick }) => {
           </div>
         )}
 
-        {(file.partyOne || file.partyTwo) && (
+        {(file.partyOne || file.partyTwo || file.company) && (
           <div className="case-file-card-parties">
             {file.partyOne && <span>{file.partyOne}</span>}
             {file.partyOne && file.partyTwo && <span className="vs"> vs </span>}
             {file.partyTwo && <span>{file.partyTwo}</span>}
+            {file.company && <span>{file.company}</span>}
           </div>
         )}
 

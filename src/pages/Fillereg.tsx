@@ -582,6 +582,173 @@ const Fillereg: React.FC<FilleregProps> = ({
           {caseConfig.partiesLayout === "consultancy" && (
             <>
               {/* Company & Individual sections can use initialData similarly */}
+              <div className="section-title">COMPANY</div>
+              <div className="form-row">
+                <span>Comany Name:</span>
+                <input
+                  required={!readOnly}
+                  type="text"
+                  name="company_name"
+                  defaultValue={
+                    initialData.company_name || initialData.partyOne || ""
+                  }
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>Represented by</span>
+                <input
+                  type="text"
+                  name="company_represented_by"
+                  defaultValue={
+                    initialData.company_represented_by ||
+                    initialData.representative ||
+                    ""
+                  }
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <span>HQs:</span>
+                <input
+                  type="text"
+                  name="company_hqs"
+                  defaultValue={initialData.company_hqs || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>Village</span>
+                <input
+                  type="text"
+                  name="company_village"
+                  defaultValue={initialData.company_village || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>Cell</span>
+                <input
+                  type="text"
+                  name="company_cell"
+                  defaultValue={initialData.company_cell || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <span>Sector</span>
+                <input
+                  type="text"
+                  name="company_sector"
+                  defaultValue={initialData.company_sector || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>District</span>
+                <input
+                  type="text"
+                  name="company_district"
+                  defaultValue={initialData.company_district || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>Province</span>
+                <input
+                  type="text"
+                  name="company_province"
+                  defaultValue={initialData.company_province || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <span>Email</span>
+                <input
+                  type="email"
+                  name="company_email"
+                  defaultValue={initialData.company_email || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>TIN:</span>
+                <input
+                  type="text"
+                  name="company_tin"
+                  defaultValue={initialData.company_tin || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>P. O. Box</span>
+                <input
+                  type="text"
+                  name="company_po_box"
+                  defaultValue={initialData.company_po_box || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <span>Office Phone nº</span>
+                <input
+                  type="text"
+                  name="company_office_phone"
+                  defaultValue={initialData.company_office_phone || ""}
+                  readOnly={readOnly}
+                  className="line-input input-fixed-md"
+                />
+                <span>Represented by</span>
+                <input
+                  type="text"
+                  name="company_rep_represented_by"
+                  defaultValue={initialData.company_rep_represented_by || ""}
+                  readOnly={readOnly}
+                  className="line-input"
+                />
+                <span>Mobile Phone nº</span>
+                <input
+                  type="text"
+                  name="company_mobile_phone"
+                  defaultValue={initialData.company_mobile_phone || ""}
+                  readOnly={readOnly}
+                  className="line-input input-fixed-md"
+                />
+              </div>
+              <PartySection
+                type="individual"
+                title="INDIVIDUAL"
+                nameLabel="Names:"
+                repLabel="Represented by"
+                readOnly={readOnly}
+                initialData={{
+                  individual_name:
+                    initialData.individual_names || initialData.partyTwo || "",
+                  individual_parent: initialData.individual_parent || "",
+                  individual_parents_names:
+                    initialData.individual_parent_names || "",
+                  individual_occupation:
+                    initialData.individual_occupation || "",
+                  individual_dob_d: initialData.individual_dob_d || "",
+                  individual_dob_m: initialData.individual_dob_m || "",
+                  individual_dob_y: initialData.individual_dob_y || "",
+                  individual_residence:
+                    initialData.individual_resident_of || "",
+                  individual_village: initialData.individual_village || "",
+                  individual_cell: initialData.individual_cell || "",
+                  individual_sector: initialData.individual_sector || "",
+                  individual_district: initialData.individual_district || "",
+                  individual_province: initialData.individual_province || "",
+                  individual_email: initialData.individual_email || "",
+                  individual_id_pass: initialData.individual_id_pass_no || "",
+                  individual_po_box: initialData.individual_po_box || "",
+                  individual_phone: initialData.individual_phone_no || "",
+                  individual_rep: initialData.individual_represented_by || "",
+                  individual_rep_phone:
+                    initialData.individual_mobile_phone || "",
+                }}
+              />
             </>
           )}
 
