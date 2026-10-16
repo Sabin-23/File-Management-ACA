@@ -4,8 +4,8 @@ import { CASE_TYPES, type CaseType } from "./caseTypes";
 import CaseFileCard, { type CaseFileSummary } from "./Casefilecard";
 import "./CaseFileList.css";
 import { authClient } from "../lib/auth";
+import { API_BASE } from "../config";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
 const CASE_FILES_ENDPOINT = `${API_BASE}/api/case-files`;
 const { data: sessionData } = await authClient.getSession();
 const token = sessionData?.session?.token;

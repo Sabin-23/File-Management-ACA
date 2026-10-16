@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import "./Fillereg.css";
 import logoImg from "../assets/cropped-Logo-Abayo-Co.-Advocates.png";
 import { authClient } from "../lib/auth";
+import { API_BASE } from "../config";
 
 type CaseType =
   | "civil"
@@ -378,14 +379,17 @@ const Fillereg: React.FC<FilleregProps> = ({
         throw new Error("You are signed out. Please sign in again.");
       }
 
-      const response = await fetch(`/api/case-files/${currentCaseType}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${API_BASE}/api/case-files/${currentCaseType}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ ...data, fullName, dep }),
         },
-        body: JSON.stringify({ ...data, fullName, dep }),
-      });
+      );
 
       const result = await response.json().catch(() => ({}));
 

@@ -4,13 +4,20 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
+  const apiTarget = env.VITE_API_TARGET
   return {
     plugins: [react()],
     resolve: {
       dedupe: ['react', 'react-dom'],
     },
     server: {
-      proxy: { '/api': env.VITE_API_TARGET }
+      proxy: {
+        '/api': {
+          target: apiTarget,
+          changeOrigin: true, 
+          secure: false,      
+        },
+      },
     },
   }
 })
