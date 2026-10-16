@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { authClient } from "../lib/auth";
 import { API_BASE } from "../config";
 
