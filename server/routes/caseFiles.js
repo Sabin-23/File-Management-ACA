@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { sql } from '../db.js';
 import { CASE_TABLES } from '../config/caseTable.js';
 import { requireAuth } from '../requireauth.js';
+import * as XLSX from 'xlsx';
 
 const router = Router();
 
@@ -350,6 +351,69 @@ router.patch('/:fileType/:case_number/transfer', requireAuth, async (req, res) =
   } catch (err) {
     console.error('Failed to transfer case file:', err);
     res.status(500).json({ error: 'Failed to transfer case file.' });
+  }
+});
+
+router.get('/export/:fileType', requireAuth, async (req, res) => {
+  const { fileType } = req.params;
+  const cfg = CASE_TABLES[fileType];
+
+  if (!cfg) {
+    return res.status(400).json({ error: 'Invalid case type specified for export.' });
+  }
+
+  try {
+    const query = `SELECT * FROM ${cfg.table} ORDER BY case_number DESC`;
+    const rows = await sql.query(query);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: `No records found in ${fileType} table.` });
+    }
+
+    const cleanedRows = rows.map(row => {
+      const copy = { ...row };
+
+      const caseNumCol = cfg.columns?.case_number || 'case_number';
+      const partialCol = cfg.columns?.partial_case || 'partial_case';
+
+      const caseNum = row[caseNumCol];
+      const partialCase = row[partialCol];
+
+      if (caseNum !== undefined && caseNum !== null) {
+        copy['ACA CASE NUMBER'] = partialCase 
+          ? `ACA ${caseNum}/${partialCase}` 
+          : `ACA ${caseNum}`;
+      } else {
+        copy['ACA CASE NUMBER'] = '';
+      }
+
+      
+      delete copy[caseNumCol];
+      delete copy[partialCol];
+      delete copy.adv_id; 
+
+      return copy;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(cleanedRows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, fileType.toUpperCase());
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${fileType}_cases_${new Date().toISOString().split('T')[0]}.xlsx`
+    );
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+
+    res.send(excelBuffer);
+  } catch (err) {
+    console.error('Failed to export Excel file:', err);
+    res.status(500).json({ error: 'Failed to generate Excel file.' });
   }
 });
 

@@ -8,10 +8,11 @@ import {
 import "./dashboard.css";
 import logoImg from "../assets/cropped-Logo-Abayo-Co.-Advocates.png";
 import CaseFileList from "../components/CaseFileList";
+import Downloads from "../components/download";
 
 export function Home() {
   const navigate = useNavigate();
-
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "overview" | "Files" | "ref" | "setting"
   >("Files");
@@ -59,6 +60,18 @@ export function Home() {
     navigate(`/Fillereg?${queryParams}`);
 
     closeModal();
+  };
+  const backdropStyle: React.CSSProperties = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
   };
 
   return (
@@ -160,12 +173,28 @@ export function Home() {
                   <h2>Open New File</h2>
                 </div>
 
-                <div className="card">
+                <div
+                  className="card"
+                  onClick={() => setIsExportModalOpen(true)}
+                  style={{ cursor: "pointer" }}
+                >
                   <span className="card-index">02</span>
-                  <h2>Feature 2</h2>
+                  <h2>Export to Excel</h2>
                 </div>
               </div>
             </section>
+          )}
+          {isExportModalOpen && (
+            <div style={backdropStyle}>
+              <div
+                style={{
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                }}
+              >
+                <Downloads onClose={() => setIsExportModalOpen(false)} />
+              </div>
+            </div>
           )}
 
           {activeTab === "overview" && (
