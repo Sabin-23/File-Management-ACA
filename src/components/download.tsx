@@ -131,7 +131,7 @@ export default function ExcelExportModal({
           disabled={downloading}
           style={{
             padding: "8px 16px",
-            background: "#0f172a",
+            background: "#790000",
             color: "#fff",
             border: "none",
             borderRadius: "4px",
