@@ -201,7 +201,6 @@ export function Home() {
             <section id="overview" className="page active">
               <div className="page-eyebrow">ACA · File Management</div>
               <h1>Overview</h1>
-              <p>Overview details and statistics go here.</p>
             </section>
           )}
 
@@ -217,8 +216,6 @@ export function Home() {
             <section id="setting" className="page active">
               <div className="page-eyebrow">ACA · File Management</div>
               <h1>Settings</h1>
-              <p>Account and app preferences go here.</p>
-
               <div className="user-account">
                 <UserButton />
               </div>
