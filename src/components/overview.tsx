@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { authClient } from "../lib/auth";
 import { CASE_TYPES } from "./caseTypes";
 import "./overview.css";
-
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+import { API_BASE } from "../config";
 
 /* ---------- Types (match server/routes/dashboard.js) ---------- */
 
