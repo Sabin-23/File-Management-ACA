@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { FocusEvent, PointerEvent, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "../lib/auth";
-import { CASE_TYPES } from "../components/caseTypes";
+import { CASE_TYPES } from "./caseTypes";
 import "./overview.css";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
