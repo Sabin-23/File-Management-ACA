@@ -16,5 +16,5 @@ app.use('/api/dashboard', dashboard)
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 app.listen(PORT, () => {
-  console.log(`API server listening on http://localhost:${PORT}`);
+  console.log(`API server listening`);
 });
