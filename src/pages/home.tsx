@@ -9,6 +9,7 @@ import "./dashboard.css";
 import logoImg from "../assets/cropped-Logo-Abayo-Co.-Advocates.png";
 import CaseFileList from "../components/CaseFileList";
 import Downloads from "../components/download";
+import Overview from "../components/overview";
 
 export function Home() {
   const navigate = useNavigate();
@@ -201,6 +202,10 @@ export function Home() {
             <section id="overview" className="page active">
               <div className="page-eyebrow">ACA · File Management</div>
               <h1>Overview</h1>
+              <Overview
+                onNewFile={() => setIsModalOpen(true)}
+                onBrowseFiles={() => setActiveTab("ref")}
+              />
             </section>
           )}
 

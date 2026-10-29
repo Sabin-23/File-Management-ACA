@@ -1,0 +1,779 @@
+/* Overview dashboard. Uses the tokens from dashboard.css
+   (--ink, --oxblood, --parchment, --line, fonts ...). Nothing here is global. */
+
+.ov-root {
+    --ov-muted-mark: #a89985; /* de-emphasis: older years */
+    --ov-track: #f3e6e3; /* lighter step of the oxblood ramp */
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.ov-muted {
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin: 0;
+}
+
+.ov-code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--oxblood);
+    flex: none;
+    min-width: 34px;
+}
+
+/* ---------- Toolbar (welcome + scope + refresh) ---------- */
+
+.ov-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ov-welcome {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ov-welcome-line {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.ov-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ov-refresh {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+.ov-refresh:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* Segmented control */
+.ov-seg {
+    display: inline-flex;
+    background: var(--parchment);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    gap: 2px;
+}
+
+.ov-seg button {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ov-seg button:hover {
+    color: var(--ink);
+}
+
+.ov-seg button[aria-pressed='true'] {
+    background: var(--oxblood);
+    color: #fff;
+    font-weight: 600;
+}
+
+.ov-seg button:focus-visible,
+.ov-link:focus-visible,
+.ov-recent button:focus-visible,
+.ov-tile.is-link:focus-visible,
+.ov-bar-row:focus-visible,
+.ov-col:focus-visible {
+    outline: 2px solid var(--oxblood);
+    outline-offset: 2px;
+}
+
+.ov-banner {
+    background: var(--oxblood-tint);
+    color: var(--oxblood-deep);
+    border: 1px solid #ecc9c9;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+/* Refetch keeps the frame */
+.ov-frame {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    transition: opacity 0.2s ease;
+}
+
+.ov-frame.is-loading {
+    opacity: 0.55;
+}
+
+/* ---------- Hero + tiles ---------- */
+
+.ov-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 18px;
+}
+
+.ov-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 26px 28px;
+    border-radius: var(--radius);
+    color: #f4e9e5;
+    background:
+        repeating-linear-gradient(135deg, rgba(244, 233, 229, 0.05) 0 1px, transparent 1px 14px),
+        linear-gradient(160deg, var(--oxblood), var(--oxblood-deep));
+}
+
+.ov-hero-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.ov-hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #d9b9bf;
+}
+
+.ov-hero-value {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #fff;
+}
+
+.ov-hero-sub {
+    font-size: 14px;
+    color: #e6cfd2;
+}
+
+.ov-hero-spark {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    color: #f4e9e5;
+    flex: none;
+}
+
+.ov-spark {
+    width: 190px;
+    height: auto;
+    display: block;
+}
+
+.ov-hero-range {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #d9b9bf;
+}
+
+.ov-tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.ov-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    padding: 18px 18px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    color: var(--ink);
+    min-width: 0;
+}
+
+.ov-tile:first-child {
+    grid-column: 1 / -1;
+}
+
+.ov-tile.is-link {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ov-tile.is-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -12px rgba(28, 23, 18, 0.18);
+    border-color: var(--oxblood);
+}
+
+.ov-tile.is-attention {
+    border-color: var(--oxblood);
+    background: linear-gradient(0deg, var(--oxblood-tint), var(--surface) 70%);
+}
+
+.ov-tile-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.ov-tile-value {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.ov-tile-value small {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: 0;
+}
+
+.ov-tile-foot {
+    font-size: 13px;
+    color: var(--ink-soft);
+}
+
+.ov-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--oxblood-deep);
+    font-weight: 600;
+}
+
+.ov-flag b {
+    display: inline-grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--oxblood);
+    color: #fff;
+    font-size: 11px;
+    line-height: 1;
+}
+
+/* ---------- Cards ---------- */
+
+.ov-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.ov-span-6 {
+    grid-column: span 6;
+}
+
+.ov-span-12 {
+    grid-column: span 12;
+}
+
+.ov-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 20px 22px 22px;
+    min-width: 0;
+}
+
+.ov-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.ov-card-head h3 {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+}
+
+.ov-card-head p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+}
+
+.ov-link {
+    background: none;
+    border: none;
+    padding: 4px 2px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--oxblood);
+    cursor: pointer;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.ov-link:hover {
+    color: var(--oxblood-deep);
+    text-decoration: underline;
+}
+
+.ov-footnote {
+    margin: 14px 0 0;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+}
+
+/* ---------- Ranked bars ---------- */
+
+.ov-bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ov-bar-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 42%) 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 6px;
+    margin: 0 -6px;
+    border-radius: 6px;
+    transition: background-color 0.15s ease;
+}
+
+.ov-bar-row:hover {
+    background: var(--parchment);
+}
+
+.ov-bar-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--ink);
+    min-width: 0;
+}
+
+.ov-bar-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ov-bar-row.is-zero .ov-bar-label {
+    color: var(--ink-soft);
+}
+
+.ov-bar-track {
+    position: relative;
+    height: 12px;
+}
+
+/* 4px rounded data-end, square at the baseline */
+.ov-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--oxblood);
+    border-radius: 0 4px 4px 0;
+    transform-origin: left;
+    animation: ov-grow 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.ov-bar-value {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    animation: ov-fade 0.4s 0.3s ease both;
+}
+
+/* a hairline baseline so zero rows still have a place to sit */
+.ov-bar-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line);
+}
+
+@keyframes ov-grow {
+    from {
+        transform: scaleX(0);
+    }
+}
+
+@keyframes ov-fade {
+    from {
+        opacity: 0;
+    }
+}
+
+/* ---------- Year columns ---------- */
+
+.ov-cols {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    height: 220px;
+    border-bottom: 1px solid var(--line);
+}
+
+.ov-col {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    padding: 0 4px;
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    transition: background-color 0.15s ease;
+}
+
+.ov-col:hover {
+    background: var(--parchment);
+}
+
+/* the plot area: headroom on top is where the value label of the tallest bar sits */
+.ov-col-plot {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-top: 26px;
+    min-height: 0;
+}
+
+/* sized to the bar's height; the value is anchored to its cap */
+.ov-col-stack {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 2px;
+}
+
+.ov-col-value {
+    position: absolute;
+    bottom: 100%;
+    padding-bottom: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    animation: ov-fade 0.4s 0.3s ease both;
+}
+
+.ov-col-bar {
+    display: block;
+    width: min(24px, 60%);
+    height: 100%;
+    min-height: 2px;
+    background: var(--ov-muted-mark);
+    border-radius: 4px 4px 0 0;
+    transform-origin: bottom;
+    animation: ov-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.ov-col.is-current .ov-col-bar {
+    background: var(--oxblood);
+}
+
+.ov-col-year {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+}
+
+.ov-col.is-current .ov-col-year {
+    color: var(--oxblood);
+    font-weight: 500;
+}
+
+/* leave room under the baseline for the year labels */
+.ov-cols {
+    margin-bottom: 30px;
+}
+
+@keyframes ov-rise {
+    from {
+        transform: scaleY(0);
+    }
+}
+
+/* ---------- Recent files ---------- */
+
+.ov-recent {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ov-recent li + li {
+    border-top: 1px solid var(--line);
+}
+
+.ov-recent button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 11px 8px;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.ov-recent button:hover {
+    background: var(--parchment);
+}
+
+.ov-recent-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.ov-recent-ref {
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.ov-recent-parties {
+    font-size: 13px;
+    color: var(--ink-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ov-recent-meta {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+}
+
+/* ---------- Table view ---------- */
+
+.ov-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.ov-table th,
+.ov-table td {
+    text-align: left;
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--line);
+}
+
+.ov-table th {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.ov-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Empty + error ---------- */
+
+.ov-empty {
+    text-align: center;
+    padding: 48px 24px;
+    border-style: dashed;
+}
+
+.ov-empty h3 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    margin: 0 0 6px;
+}
+
+.ov-empty p {
+    margin: 0 auto 20px;
+    max-width: 380px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+}
+
+.ov-error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-color: var(--oxblood);
+    color: var(--oxblood-deep);
+}
+
+.ov-error p {
+    margin: 0;
+}
+
+/* ---------- Tooltip ---------- */
+
+.ov-tip {
+    position: fixed;
+    z-index: 1100;
+    transform: translate(-50%, calc(-100% - 12px));
+    pointer-events: none;
+    background: var(--ink);
+    color: #f4e9e5;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 110px;
+    box-shadow: 0 10px 24px -8px rgba(28, 23, 18, 0.4);
+    font-family: var(--font-body);
+}
+
+.ov-tip-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* a short stroke, not a box */
+.ov-key {
+    display: inline-block;
+    width: 12px;
+    height: 3px;
+    border-radius: 2px;
+    background: #d9808a;
+}
+
+.ov-tip-title {
+    font-size: 12.5px;
+    color: #e6cfd2;
+    margin-top: 2px;
+}
+
+.ov-tip-note {
+    font-size: 12px;
+    color: #b9a7a0;
+    margin-top: 4px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1100px) {
+    .ov-top {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .ov-span-6 {
+        grid-column: span 12;
+    }
+}
+
+@media (max-width: 700px) {
+    .ov-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 22px;
+    }
+
+    .ov-hero-value {
+        font-size: 52px;
+    }
+
+    .ov-hero-spark {
+        align-items: flex-start;
+    }
+
+    .ov-tiles {
+        grid-template-columns: 1fr;
+    }
+
+    /* label above its bar so long names are never cut off */
+    .ov-bar-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .ov-card {
+        padding: 18px 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ov-bar-fill,
+    .ov-col-bar,
+    .ov-col-value,
+    .ov-bar-value {
+        animation: none;
+    }
+}
